@@ -3,8 +3,10 @@ VS1053 library for STM32 HAL Driver
 
 Tutorial : under writing<br>
 
-References : 
+References :<br>
 https://www.sparkfun.com/datasheets/Components/SMD/vs1053.pdf
 http://www.toughdev.com/content/2013/10/interfacing-vs1053-audio-encoderdecoder-module-with-pic-using-spi/
 https://github.com/adafruit/Adafruit_VS1053_Library
+
+https://youtu.be/zDAlAI_crkY
 
