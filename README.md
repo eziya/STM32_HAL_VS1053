@@ -1,0 +1,2 @@
+# STM32_HAL_VS1053
+VS1053 library for STM32 HAL Driver
