@@ -59,8 +59,12 @@
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 
+UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+uint8_t SerialFlag = 0;
+uint8_t SerialCmd = 0;
 
 /* USER CODE END PV */
 
@@ -69,6 +73,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_SPI3_Init(void);
+static void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -76,6 +81,14 @@ static void MX_SPI3_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance == USART2)
+	{
+		SerialFlag = 1;
+		HAL_UART_Receive_IT(&huart2, &SerialCmd, 1);
+	}
+}
 
 /* USER CODE END 0 */
 
@@ -111,9 +124,10 @@ int main(void)
 	MX_SPI2_Init();
 	MX_SPI3_Init();
 	MX_FATFS_Init();
+	MX_USART2_UART_Init();
 	/* USER CODE BEGIN 2 */
 	MP3_Init();
-	MP3_Play("track001.mp3");
+	HAL_UART_Receive_IT(&huart2, &SerialCmd, 1);
 
 	/* USER CODE END 2 */
 
@@ -125,9 +139,35 @@ int main(void)
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
+		if(SerialFlag)
+		{
+			SerialFlag = 0;
+
+			switch(SerialCmd)
+			{
+			case '1':
+				MP3_Play("track001.mp3");
+				break;
+			case '2':
+				MP3_Play("track002.mp3");
+				break;
+			case 'p':
+			case 'P':
+				isPlaying = !isPlaying;
+				break;
+			case 's':
+			case 'S':
+				MP3_Stop();
+				break;
+			default:
+				break;
+			}
+		}
+
 		MP3_Feeder();
 	}
 	/* USER CODE END 3 */
+
 }
 
 /**
@@ -235,6 +275,25 @@ static void MX_SPI3_Init(void)
 
 }
 
+/* USART2 init function */
+static void MX_USART2_UART_Init(void)
+{
+
+	huart2.Instance = USART2;
+	huart2.Init.BaudRate = 115200;
+	huart2.Init.WordLength = UART_WORDLENGTH_8B;
+	huart2.Init.StopBits = UART_STOPBITS_1;
+	huart2.Init.Parity = UART_PARITY_NONE;
+	huart2.Init.Mode = UART_MODE_TX_RX;
+	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+	if (HAL_UART_Init(&huart2) != HAL_OK)
+	{
+		_Error_Handler(__FILE__, __LINE__);
+	}
+
+}
+
 /** Configure pins as 
  * Analog
  * Input
@@ -249,15 +308,17 @@ static void MX_GPIO_Init(void)
 
 	/* GPIO Ports Clock Enable */
 	__HAL_RCC_GPIOH_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
 	__HAL_RCC_GPIOD_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOD, XRST_Pin|XCS_Pin|XDCS_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOD, LED_GREEN_Pin|LED_RED_Pin|XRST_Pin|XCS_Pin
+			|XDCS_Pin, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin : SD_CS_Pin */
 	GPIO_InitStruct.Pin = SD_CS_Pin;
@@ -266,18 +327,20 @@ static void MX_GPIO_Init(void)
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(SD_CS_GPIO_Port, &GPIO_InitStruct);
 
+	/*Configure GPIO pins : LED_GREEN_Pin LED_RED_Pin XRST_Pin XCS_Pin
+                           XDCS_Pin */
+	GPIO_InitStruct.Pin = LED_GREEN_Pin|LED_RED_Pin|XRST_Pin|XCS_Pin
+			|XDCS_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
 	/*Configure GPIO pin : DREQ_Pin */
 	GPIO_InitStruct.Pin = DREQ_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(DREQ_GPIO_Port, &GPIO_InitStruct);
-
-	/*Configure GPIO pins : XRST_Pin XCS_Pin XDCS_Pin */
-	GPIO_InitStruct.Pin = XRST_Pin|XCS_Pin|XDCS_Pin;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
 }
 

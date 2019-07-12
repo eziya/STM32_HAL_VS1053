@@ -61,6 +61,10 @@
 
 #define SD_CS_Pin GPIO_PIN_12
 #define SD_CS_GPIO_Port GPIOB
+#define LED_GREEN_Pin GPIO_PIN_12
+#define LED_GREEN_GPIO_Port GPIOD
+#define LED_RED_Pin GPIO_PIN_14
+#define LED_RED_GPIO_Port GPIOD
 #define DREQ_Pin GPIO_PIN_0
 #define DREQ_GPIO_Port GPIOD
 #define XRST_Pin GPIO_PIN_1
