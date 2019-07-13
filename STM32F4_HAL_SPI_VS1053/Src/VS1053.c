@@ -140,6 +140,11 @@ bool VS1053_SetDecodeTime(uint16_t time)
 /* Send endfill bytes */
 bool VS1053_SendEndFill(uint16_t num)
 {
+	uint16_t regVal;
+	if(!VS1053_SciWrite(VS1053_REG_WRAMADDR, 0x1E06)) return false;	/* endFill */
+	if(!VS1053_SciRead(VS1053_REG_WRAM, &regVal)) return false;
+	endFillByte = regVal & 0xFF;
+
 	for(uint16_t i = 0; i < num; i++)
 	{
 		VS1053_SdiWrite(endFillByte);
