@@ -28,6 +28,8 @@ bool MP3_Init()
 
 bool MP3_Play(const char *filename)
 {
+	if(isPlaying) MP3_Stop();
+
 	if(!VS1053_SetMode(0x4800)) return false;	/* SM LINE1 | SM SDINEW */
 	if(!VS1053_AutoResync()) return false;		/* AutoResync */
 	if(!VS1053_SetDecodeTime(0)) return false;	/* Set decode time */
