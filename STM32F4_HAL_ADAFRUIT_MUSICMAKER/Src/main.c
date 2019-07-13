@@ -156,6 +156,18 @@ int main(void)
 			case '2':
 				MP3_Play("track002.mp3");
 				break;
+			case '3':
+				MP3_Play("track003.flac");
+				break;
+			case '4':
+				MP3_Play("track004.flac");
+				break;
+			case '5':
+				MP3_Play("track005.flac");
+				break;
+			case '6':
+				MP3_Play("track006.mp3");
+				break;
 			case 'p':
 			case 'P':
 				isPlaying = !isPlaying;

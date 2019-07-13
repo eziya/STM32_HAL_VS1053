@@ -16,19 +16,24 @@ static uint8_t PowerFlag = 0;				/* Power flag */
 /***************************************
  * SPI functions
  **************************************/
+__STATIC_INLINE void DelayUs(volatile uint32_t us)
+{
+	us *= (SystemCoreClock / 1000000);
+	while (us--);
+}
 
 /* slave select */
 static void SELECT(void)
 {
 	HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_RESET);
-	HAL_Delay(1);
+	DelayUs(10);
 }
 
 /* slave deselect */
 static void DESELECT(void)
 {
 	HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_SET);
-	HAL_Delay(1);
+	DelayUs(10);
 }
 
 /* SPI transmit a byte */

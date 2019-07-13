@@ -1,7 +1,7 @@
 #include "MP3_Player.h"
 #include "fatfs.h"
 
-#define BUFFER_SIZE 	32
+#define BUFFER_SIZE 	256
 
 uint8_t mp3Buffer[BUFFER_SIZE];
 uint32_t mp3FileSize;
@@ -89,8 +89,11 @@ void MP3_Feeder(void)
 		/* Fill the buffer */
 		f_read(&mp3File, mp3Buffer, BUFFER_SIZE, (void*)&readBytes);
 
-		/* Tx buffer */
-		VS1053_SdiWrite32( mp3Buffer );
+		for(int i = 0; i < (BUFFER_SIZE/32); i++)
+		{
+			/* Tx buffer */
+			VS1053_SdiWrite32( (mp3Buffer + (i * 32)));
+		}
 
 		/* bytes to send */
 		mp3FileSize -= BUFFER_SIZE;

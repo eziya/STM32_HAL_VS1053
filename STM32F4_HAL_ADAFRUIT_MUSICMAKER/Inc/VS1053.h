@@ -32,11 +32,14 @@ bool VS1053_AutoResync();
 bool VS1053_SetDecodeTime(uint16_t time);
 bool VS1053_SendEndFill(uint16_t num);
 bool VS1053_IsBusy();
+bool VS1053_ApplyFlacPlugin();
 bool VS1053_SciWrite(uint8_t address, uint16_t input);
 bool VS1053_SciRead(uint8_t address, uint16_t *res);
 bool VS1053_SdiWrite(uint8_t input);
 bool VS1053_SdiWrite32(uint8_t *input32);
 
 extern uint8_t endFillByte;
+extern const uint8_t atab[8208];
+extern const uint16_t dtab[8208];
 
 #endif
