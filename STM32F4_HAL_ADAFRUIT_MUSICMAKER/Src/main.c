@@ -57,7 +57,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi2;
-SPI_HandleTypeDef hspi3;
 
 UART_HandleTypeDef huart2;
 
@@ -71,9 +70,8 @@ uint8_t SerialCmd = 0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_SPI2_Init(void);
-static void MX_SPI3_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_SPI2_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -121,12 +119,19 @@ int main(void)
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
-	MX_SPI2_Init();
-	MX_SPI3_Init();
-	MX_FATFS_Init();
 	MX_USART2_UART_Init();
+	MX_SPI2_Init();
+	MX_FATFS_Init();
 	/* USER CODE BEGIN 2 */
-	MP3_Init();
+	if(!MP3_Init())
+	{
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
+	}
+
 	HAL_UART_Receive_IT(&huart2, &SerialCmd, 1);
 
 	/* USER CODE END 2 */
@@ -251,30 +256,6 @@ static void MX_SPI2_Init(void)
 
 }
 
-/* SPI3 init function */
-static void MX_SPI3_Init(void)
-{
-
-	/* SPI3 parameter configuration*/
-	hspi3.Instance = SPI3;
-	hspi3.Init.Mode = SPI_MODE_MASTER;
-	hspi3.Init.Direction = SPI_DIRECTION_2LINES;
-	hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
-	hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
-	hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
-	hspi3.Init.NSS = SPI_NSS_SOFT;
-	hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
-	hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
-	hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
-	hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-	hspi3.Init.CRCPolynomial = 10;
-	if (HAL_SPI_Init(&hspi3) != HAL_OK)
-	{
-		_Error_Handler(__FILE__, __LINE__);
-	}
-
-}
-
 /* USART2 init function */
 static void MX_USART2_UART_Init(void)
 {
@@ -311,36 +292,25 @@ static void MX_GPIO_Init(void)
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 	__HAL_RCC_GPIOD_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOD, SD_CS_Pin|MP3_XCS_Pin|MP3_XDCS_Pin|LED1_Pin
+			|LED2_Pin|LED3_Pin|LED4_Pin, GPIO_PIN_RESET);
 
-	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOD, LED_GREEN_Pin|LED_RED_Pin|XRST_Pin|XCS_Pin
-			|XDCS_Pin, GPIO_PIN_RESET);
-
-	/*Configure GPIO pin : SD_CS_Pin */
-	GPIO_InitStruct.Pin = SD_CS_Pin;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(SD_CS_GPIO_Port, &GPIO_InitStruct);
-
-	/*Configure GPIO pins : LED_GREEN_Pin LED_RED_Pin XRST_Pin XCS_Pin
-                           XDCS_Pin */
-	GPIO_InitStruct.Pin = LED_GREEN_Pin|LED_RED_Pin|XRST_Pin|XCS_Pin
-			|XDCS_Pin;
+	/*Configure GPIO pins : SD_CS_Pin MP3_XCS_Pin MP3_XDCS_Pin LED1_Pin
+                           LED2_Pin LED3_Pin LED4_Pin */
+	GPIO_InitStruct.Pin = SD_CS_Pin|MP3_XCS_Pin|MP3_XDCS_Pin|LED1_Pin
+			|LED2_Pin|LED3_Pin|LED4_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-	/*Configure GPIO pin : DREQ_Pin */
-	GPIO_InitStruct.Pin = DREQ_Pin;
+	/*Configure GPIO pin : MP3_DREQ_Pin */
+	GPIO_InitStruct.Pin = MP3_DREQ_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(DREQ_GPIO_Port, &GPIO_InitStruct);
+	HAL_GPIO_Init(MP3_DREQ_GPIO_Port, &GPIO_InitStruct);
 
 }
 
