@@ -16,6 +16,7 @@ VS1053 library for STM32 HAL Driver<br>
       
 ## Tutorial :<br>
 https://blog.naver.com/eziya76/221584296747
+https://blog.naver.com/eziya76/221585207076
 
 
 ## References :<br>
