@@ -11,12 +11,13 @@ VS1053 library for STM32 HAL Driver<br>
 ## 2. STM32F4_HAL_ADAFRUIT_MUSICMAKER (Adafruit music maker project)<br>
    - **MP3 + FLAC supporting.**<br>
    - Flac feature was tested with only 3 flac files, so I won't be able to guarantee its sound quality.<br>
-   - (5.0 + 2.0)x CLKI = 84MHz clock operation.<br>
-   - 84 / 7 = Max 12MHz SPI speed.   
+   - (3.5 + 1.0)x CLKI = 54MHz clock operation.<br>
+   - 54 / 7 = Max 7.7MHz SPI speed.   
       
 ## Tutorial :<br>
 https://blog.naver.com/eziya76/221584296747<br>
 https://blog.naver.com/eziya76/221585207076<br>
+https://blog.naver.com/eziya76/221585582258<br>
 <br>
 
 ## References :<br>
