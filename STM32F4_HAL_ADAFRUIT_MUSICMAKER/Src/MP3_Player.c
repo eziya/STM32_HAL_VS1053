@@ -1,7 +1,7 @@
 #include "MP3_Player.h"
 #include "fatfs.h"
 
-#define BUFFER_SIZE 	256
+#define BUFFER_SIZE 	512
 
 uint8_t mp3Buffer[BUFFER_SIZE];
 uint32_t mp3FileSize;

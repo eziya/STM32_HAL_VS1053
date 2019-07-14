@@ -39,40 +39,38 @@ uint8_t endFillByte;
 /* Initialize VS1053 */
 bool VS1053_Init()
 {
-	uint16_t status = 0;
+	/*
+	 * Adafruit Music Maker Feather board has no XRST pin.
+	 * It returns valid version (0x04) with hard reset but
+	 * returns invalid version without hard reset.
+	 * I removed version check codes to make it pass the initialization routine.
+	 */
+
+	//uint16_t status = 0;
 
 	XCS_HIGH;		    /* XCS High */
 	XDCS_HIGH;		    /* XDCS High */
-	/* Adafruit Music Maker has no XRST pin */
 	//VS1053_Reset();     /* Hard Reset */
 
-	/* x 1.0 Clock, 12MHz / 7, SPI Baudrate should be less than 1.75MHz */
+	/* x 1.0 Clock, 12MHz, SPI Baudrate should be less than 12/7 = 1.75MHz */
 	(HSPI_VS1053)->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;  /* 42MHz / 32 = 1.31MHz */
 	if(HAL_SPI_Init(HSPI_VS1053) != HAL_OK) return false;
 
 	/* Read Status to check SPI */
-	if(!VS1053_SciRead(VS1053_REG_STATUS, &status)) return false;
-	/* As Adafruit Music Maker has no XRST pin, it returns different value */
+	//if(!VS1053_SciRead(VS1053_REG_STATUS, &status)) return false;
 	//if(((status >> 4) & 0x0F) != 0x04) return false;
-
-	/* MP3 Mode GPIO configuration, Adafruit Music Maker doesn't need GPIO configuration */
-	//if(!VS1053_SciWrite(VS1053_REG_WRAMADDR, 0xC017)) return false; /* GPIO direction */
-	//if(!VS1053_SciWrite(VS1053_REG_WRAM, 3)) return false;
-	//if(!VS1053_SciWrite(VS1053_REG_WRAMADDR, 0xC019)) return false; /* GPIO output */
-	//if(!VS1053_SciWrite(VS1053_REG_WRAM, 0)) return false;
 
 	/* Soft reset */
 	if(!VS1053_SoftReset()) return false;
 
-	/* (5 + 2.0)x , 12MHz * 4.5 = 84MHz / 7, SPI Baudrate should be less than 12MHz */
-	if(!VS1053_SciWrite(VS1053_REG_CLOCKF, 0xf800)) return false;
+	/* (3.5 + 1) , 12MHz * 4.5 = 54MHz, SPI Baudrate should be less than 54/7=7.7MHz */
+	if(!VS1053_SciWrite(VS1053_REG_CLOCKF, 0x8800)) return false;
 
-	(HSPI_VS1053)->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;  /* 42MHz / 4 = 10.5MHz */
+	(HSPI_VS1053)->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;  /* 42MHz / 8 = 5.2MHz */
 	if(HAL_SPI_Init(HSPI_VS1053) != HAL_OK) return false;
 
 	/* Read Status to check SPI */
-	if(!VS1053_SciRead(VS1053_REG_STATUS, &status)) return false;
-	/* As Adafruit Music Maker has no XRST pin, it returns different value */
+	//if(!VS1053_SciRead(VS1053_REG_STATUS, &status)) return false;
 	//if(((status >> 4) & 0x0F) != 0x04) return false;
 
 	/* Read endFill Byte */
