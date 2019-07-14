@@ -15,9 +15,9 @@ VS1053 library for STM32 HAL Driver<br>
    - 84 / 7 = Max 12MHz SPI speed.   
       
 ## Tutorial :<br>
-https://blog.naver.com/eziya76/221584296747
-https://blog.naver.com/eziya76/221585207076
-
+https://blog.naver.com/eziya76/221584296747<br>
+https://blog.naver.com/eziya76/221585207076<br>
+<br>
 
 ## References :<br>
 https://www.sparkfun.com/datasheets/Components/SMD/vs1053.pdf
@@ -28,5 +28,5 @@ https://www.stm32duino.com/viewtopic.php?t=3989
 
 ## Video :<br>
 [mp3] https://youtu.be/eXfEtPJAg7A<br>
-[control] https://youtu.be/T6InNaj4nKY
-[flac]
+[control] https://youtu.be/T6InNaj4nKY<br>
+[flac]https://youtu.be/KbtVWLXmmWs<br>
